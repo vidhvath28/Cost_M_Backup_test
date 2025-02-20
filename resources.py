@@ -22,7 +22,7 @@ headers = {
     "Content-Type": "application/json"
 }
 
-# Request Body (Fetching Cost Data Grouped by Resource)
+# Request Body (Fetching Cost Data Grouped by Resource, Resource Location, and Service Name)
 payload = {
     "type": "Usage",
     "timeframe": "MonthToDate",
@@ -36,7 +36,11 @@ payload = {
         },
         "grouping": [
             {"type": "Dimension", "name": "ResourceId"},
-            {"type": "Dimension", "name": "ResourceGroup"}
+            {"type": "Dimension", "name": "ResourceGroup"},
+            {"type": "Dimension", "name": "ResourceLocation"},  # Fixed Location Key
+            {"type": "Dimension", "name": "ServiceName"},  # Keeping Service Name
+            { "type": "Dimension", "name": "ServiceTier"},
+            {"type": "Dimension", "name": "Meter"}
         ]
     }
 }
@@ -55,8 +59,8 @@ if response.status_code == 200:
     with open(csv_filename, mode="w", newline="") as file:
         writer = csv.writer(file)
         
-        # Write Header
-        writer.writerow(["Total Cost (₹)", "UsageDate", "ResourceId", "ResourceGroupName ", "Currency"])
+        # Write Header (Updated)
+        writer.writerow(["Total Cost (₹)", "UsageDate", "ResourceId", "ResourceGroupName", "Resource Location", "Service Name","ServiceTier","Meter", "Currency"])
         
         # Write Data Rows
         for row in cost_data.get("properties", {}).get("rows", []):
